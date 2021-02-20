@@ -119,7 +119,7 @@ wrk.str.random = function(length=1, lowercaseAllowed=true, uppercaseAllowed=true
 }
 
 wrk.str.randomLetters = function(length=1, lowercaseAllowed=true, uppercaseAllowed=true) { 
-    var charsToUse = [];
+    var charsToUse = wrk.str.symbols;
     if (lowercaseAllowed) charsToUse = charsToUse.concat(wrk.str.lowerAlphabet);
     if (uppercaseAllowed) charsToUse = charsToUse.concat(wrk.str.upperAlphabet);
     
@@ -127,7 +127,7 @@ wrk.str.randomLetters = function(length=1, lowercaseAllowed=true, uppercaseAllow
 }
 
 wrk.str.randomSymbols = function(length=1, digitsAllowed=false) { 
-    var charsToUse = [];
+    var charsToUse = wrk.str.symbols;
     if (digitsAllowed) charsToUse = charsToUse.concat(wrk.str.digits);
     
     return wrk.str.randomFromArray(length, charsToUse);
@@ -222,7 +222,7 @@ wrk.dom.viewportHeight = function() {
 }
 
 wrk.dom.viewportSize = function() {
-    return wrk.v(wrk.dom.viewportWidth, wrk.dom.viewportHeight);
+    return wrk.v(wrk.dom.viewportWidth(), wrk.dom.viewportHeight());
 }
 
 wrk.dom.clearLogPara = function() {
@@ -685,11 +685,39 @@ wrk.MouseWatcher = class {
         this.elem = elem;
 
         this.position = wrk.v(0, 0);
+
+        this.pointerDown = false;
+        this.mouseDown = false;
+        this.touchDown = false;
         
         this.elem.addEventListener('mousemove', e => {
             var rect = e.target.getBoundingClientRect();
             this.position.x = e.x - rect.left;
             this.position.y = e.y - rect.top;
+        });
+
+        this.elem.addEventListener('mousedown', e => {
+            this.mouseDown = true;
+        });
+
+        this.elem.addEventListener('mouseup', e => {
+            this.mouseDown = false;
+        });
+
+        this.elem.addEventListener('touchstart', e => {
+            this.touchDown = true;
+        });
+
+        this.elem.addEventListener('touchend', e => {
+            this.touchDown = false;
+        });
+
+        this.elem.addEventListener('pointerdown', e => {
+            this.pointerDown = true;
+        });
+
+        this.elem.addEventListener('pointerup', e => {
+            this.pointerDown = false;
         });
     }
 }
@@ -939,6 +967,8 @@ wrk.GameEngine = class {
 
     static crntScene;
 
+    static deltaTime;
+
     static init(canvasSize, globalScale, backgroundColor=0x000000) {
         wrk.internalWarn('wrk.GameEngine is an undocumented, untested festure. Use with caution');
         
@@ -970,7 +1000,10 @@ wrk.GameEngine = class {
 
         this.pixiApp.ticker.add(() => this.update());
 
+        this.pixiApp.stage.pivot.set(0.5, 0.5);
+
         this.setCanvasSize(canvasSize);
+        this.setGlobalScale(this.globalScale);
     }
 
     static setCanvasSize(size) {
@@ -978,16 +1011,33 @@ wrk.GameEngine = class {
 
         this.pixiApp.view.width = this.canvasSize.x * this.globalScale;
         this.pixiApp.view.height = this.canvasSize.y * this.globalScale;
+
+        this.pixiApp.renderer.resize(this.canvasSize.x * this.globalScale,
+            this.canvasSize.y * this.globalScale)
     }
 
     static setGlobalScale(scale) {
         this.globalScale = scale;
+        if (this.pixiApp != undefined) {
+            this.pixiApp.stage.scale.set(this.globalScale, this.globalScale);
+        }
+        if (this.canvasSize != undefined) {
+            this.setCanvasSize(this.canvasSize);
+        }
     }
 
     static removeChildrenFromPixiApp() {
         while(this.pixiApp.stage.children.length > 0) { 
             this.pixiApp.stage.removeChild(this.pixiApp.stage.children[0]);
         }
+    }
+
+    static get backgroundColor() {
+        return this.pixiApp.renderer.backgroundColor;
+    }
+
+    static setBackgroundColor(color) {
+        this.pixiApp.renderer.backgroundColor = color;
     }
 
     // Scenes
@@ -1017,6 +1067,8 @@ wrk.GameEngine = class {
     // -------------
 
     static update() {
+        this.deltaTime = this.pixiApp.ticker.elapsedMS / 1000;
+
         if (this.crntScene != null) {
             this.crntScene.internalUpdate();
         }
@@ -1029,6 +1081,8 @@ wrk.GameEngine.Entity = class {
 
         this.setLocalPosition(localPosition);
         this.setLocalAngle(localAngle);
+
+        this.setParentContainer(null); // specify that this 
         
         this.children = [];
     }
@@ -1045,6 +1099,7 @@ wrk.GameEngine.Entity = class {
 
     addToPixiContainer(container) {
         // do nothing except add children - overwrite in drawable entities
+        this.setParentContainer(container);
         this.addChildrenToPixiContainer(container);
     }
 
@@ -1052,15 +1107,24 @@ wrk.GameEngine.Entity = class {
     addChildrenToPixiContainer(container) {
         this.children.forEach(child => {
             child.addToPixiContainer(container);
-        })
+        });
     }
 
     removeFromPixiContainer() {
         this.removeChildrenFromPixiContainer();
+        this.setParentContainer(null)
     }
 
     removeChildrenFromPixiContainer() {
-        this.children.forEach(child => child.removeFromPixiContainer());
+        this.children.forEach(child => {
+            child.removeFromPixiContainer()
+        });
+    }
+
+    setParentContainer(container=null) {
+        // Internal
+
+        this.parentContainer = container;
     }
 
     // Position
@@ -1137,10 +1201,23 @@ wrk.GameEngine.Entity = class {
 
     setParent(parent) {
         this.parent = parent;
+        
+        if (this.parent != null) {
+            this.setParentContainer(this.parent.parentContainer);
+
+            if (this.parent.parentContainer != null) {
+                this.addToPixiContainer(this.parent.parentContainer);
+            }
+
+        }
+        else {
+            this.setParentContainer(null);
+        }
     }
 
     removeParent() {
         this.setParent(null);
+        this.setParentContainer(null);
     }
 
     // Update
@@ -1165,6 +1242,7 @@ wrk.GameEngine.Scene = class extends wrk.GameEngine.Entity {
         super(name, localPosition, localAngle);
 
         this.container = new PIXI.Container();
+        this.setParentContainer(this.container);
 
         this.isSelected = false;
     }
@@ -1223,6 +1301,10 @@ wrk.GameEngine.Scene = class extends wrk.GameEngine.Entity {
         this.stopBackgroundSound();
     }
 
+    setParent(gameEngine) {
+        this.parent = gameEngine;
+    }
+
     internalUpdate() {
         this.updateChildren();
         this.update();
@@ -1255,9 +1337,11 @@ wrk.GameEngine.DrawableEntity = class extends wrk.GameEngine.Entity {
 
         this.mouseDownCallbacks = new wrk.FunctionGroup();
         this.sprite.mousedown = data => this.mouseDownCallbacks.call(data);
+        this.sprite.touchstart = data => this.mouseDownCallbacks.call(data);
         
         this.mouseUpCallbacks = new wrk.FunctionGroup();
         this.sprite.mouseup = data => this.mouseUpCallbacks.call(data);
+        this.sprite.touchend = data => this.mouseUpCallbacks.call(data);
 
         this.mouseOverCallbacks = new wrk.FunctionGroup();
         this.sprite.mouseover = data => {
@@ -1280,11 +1364,13 @@ wrk.GameEngine.DrawableEntity = class extends wrk.GameEngine.Entity {
 
     addToPixiContainer(container) {
         container.addChild(this.sprite);
+        this.setParentContainer(container);
         this.addChildrenToPixiContainer(container);
     }
 
     removeFromPixiContainer() {
         var container = this.sprite.parent;
+        this.setParentContainer(null);
         if (container != undefined) {
             container.removeChild(this.sprite);
             this.removeChildrenFromPixiContainer();
@@ -1330,17 +1416,20 @@ wrk.GameEngine.DrawableEntity = class extends wrk.GameEngine.Entity {
         this.sprite.tint = tint;
     }
 
-    setVisibile(state) {
-        this.sprite.visibile = state;
+    setVisible(state) {
+        this.sprite.visible = state;
     }
 
     internalUpdate() {
-        this.updateChildren();
-        this.update();
-
         var globalPosition = this.globalPosition;
         this.sprite.position.set(globalPosition.x, globalPosition.y);
         this.sprite.rotation = this.globalAngle + wrk.PI;
+
+        // This needs to be after the block above - 
+        // otherwise, if this entity's parent gets removed in update(),
+        // the call to globalPosition above will break
+        this.updateChildren();
+        this.update();
     }
 }
 
@@ -1357,10 +1446,12 @@ wrk.GameEngine.Label = class extends wrk.GameEngine.Entity {
     addToPixiContainer(container) {
         container.addChild(this.textSprite);
         this.addChildrenToPixiContainer(container);
+        this.setParentContainer(container);
     }
 
     removeFromPixiContainer() {
         var container = this.textSprite.parent;
+        this.setParentContainer(null);
         if (container != undefined) {
             container.removeChild(this.textSprite);
             this.removeChildrenFromPixiContainer();
@@ -1394,8 +1485,8 @@ wrk.GameEngine.Label = class extends wrk.GameEngine.Entity {
         this.textSprite.anchor.y = position.y;
     }
 
-    setVisibile(state) {
-        this.textSprite.visibile = state;
+    setVisible(state) {
+        this.textSprite.visible = state;
     }
 
     internalUpdate() {
@@ -1410,7 +1501,23 @@ wrk.GameEngine.Label = class extends wrk.GameEngine.Entity {
     updateTextSprite() {
         // Quite slow so don't call if you don't need to
 
+        if (this.textSprite != undefined) {
+            if (this.textSprite.parent != undefined) {
+                // Remove the old sprite
+                var oldParent = this.textSprite.parent;
+                oldParent.removeChild(this.textSprite);
+            }
+            var oldAnchor = this.textSprite.anchor;
+        }
         this.textSprite = new PIXI.Text(this.text, this.textFormat);
+
+        if (oldAnchor != undefined) {
+            this.setAnchor(oldAnchor);
+        }
+
+        if (oldParent != undefined) {
+            oldParent.addChild(this.textSprite);
+        }
     }
 }
 
