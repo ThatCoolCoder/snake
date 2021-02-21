@@ -31,6 +31,12 @@ class Snake {
 
         this.keyWatcher = new wrk.KeyWatcher(document);
 
+        // Create a high-frequency key-checking loop
+        // To avoid keys not being recorded if they are pressed between frames
+        // We need to use an arrow function to preserve scope
+        setInterval(() => this.checkKeysDown(), 10);
+
+        this.keysPressedThisFrame = [];
         this.crntDirection = 'right';
         this.ateThisFrame = false;
         this.alive = true;
@@ -44,6 +50,20 @@ class Snake {
         return this.segmentCoords[0];
     }
 
+    checkKeysDown() {
+        // For all of the keys that we care about:
+        wrk.obj.values(this.controls).forEach(listOfkeys => {
+            listOfkeys.forEach(key => {
+                // If it's down and we haven't already listed it,
+                // list it
+                if (this.keyWatcher.keyIsDown(key) &&
+                    ! this.keysPressedThisFrame.includes(key)) {
+                    this.keysPressedThisFrame.push(key);
+                }
+            });
+        });
+    }
+
     keybinds() {
         // This uses a for...of so that we can break
         var directions = wrk.obj.keys(this.controls);
@@ -51,7 +71,7 @@ class Snake {
         for (var direction of directions) {
             var keys = this.controls[direction];
             for (var key of keys) {
-                if (this.keyWatcher.keyIsDown(key)) {
+                if (this.keysPressedThisFrame.includes(key)) {
                     // Don't let the snake turn back into the direction it came from
                     if (this.oppositeDirections[direction]
                         != this.crntDirection) {
@@ -140,5 +160,6 @@ class Snake {
         this.draw(cellSize);
 
         this.ateThisFrame = false;
+        this.keysPressedThisFrame = [];
     }
 }
