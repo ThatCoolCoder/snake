@@ -55,7 +55,6 @@ function showStartText() {
     textSize(canvasSize.x / gridSize.x);
     text('PLAY USING ARROW KEYS OR WASD\nCLICK TO START',
         canvasSize.x / 2, canvasSize.y * 0.5);
-    text('MADE BY THATCOOLCODER', canvasSize.x / 2, canvasSize.y * 0.95);
 
     pop();
 }
