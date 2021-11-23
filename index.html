@@ -1,55 +1,18 @@
-<!-- Index page for nalton software -->
-
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Snake</title>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width">
-        <title>Nalton Software</title>
-        <link href="/websiteAssets/normalStyle.css" rel="stylesheet" type="text/css">
-        <link href="/websiteAssets/favicon.png" rel="icon">
+        <link rel="stylesheet" href="style.css" />
     </head>
-
     <body>
-        <div class="topbar" id="topbar">
-        <h1>Nalton Software</h1>
-        <button onclick="toggleSidebar()" id="sidebarButton">Hide all pages</button>
-        </div>
 
-        <table class="mainLayoutTable" id="mainLayoutTable">
-        <tr>
-            <td class="sidebarHolder" id="sidebarHolder">
-            <div class="sidebar" id="sidebar"></div>
-            </td>
-
-            <td class="mainHolder" id="mainCell">
-            <div class="main" id="mainCellInternals">
-                <div id="titleArea">
-                    <p class="pageTitle">Snake</p>
-                    <br>
-                </div>
-
-                <iframe src="indexPlain.html" style="width: 100%; border: none" id="gameFrame"></iframe>
-
-            </div>
-            </td>
-        </tr>
-        </table>
-
-        <script src="/websiteAssets/normalFunctions.js"></script>
-        <script>
-            // This script is just a small one to resize the iframe because
-            // I felt that it wasn't worth making a whole file just for this
-
-            function resizeContent() {
-                var totalHeight = sidebar.clientHeight - 10;
-                document.getElementById('mainCellInternals').style.height = totalHeight + 'px';
-                var targetHeight = totalHeight - document.getElementById('titleArea').clientHeight - 30;
-                document.getElementById('gameFrame').style.height = targetHeight + 'px';
-            }
-
-            window.onresize = resizeContent;
-            resizeContent();
-        </script>
     </body>
+
+    <script src="p5.min.js"></script>
+    <script src="wrk.js"></script>
+    <script src="scoring.js"></script>
+    <script src="Apple.js"></script>
+    <script src="Snake.js"></script>
+    <script src="script.js"></script>
 </html>
