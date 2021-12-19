@@ -1,26 +1,12 @@
 class Snake {
-    controls = {
-        up : ['ArrowUp', 'KeyW'],
-        down : ['ArrowDown', 'KeyS'],
-        right : ['ArrowRight', 'KeyD'],
-        left : ['ArrowLeft', 'KeyA']
+    directionVectors = {
+        [Direction.up] : spnr.v(0, -1),
+        [Direction.down] : spnr.v(0, 1),
+        [Direction.left] : spnr.v(-1, 0),
+        [Direction.right] : spnr.v(1, 0)
     };
 
-    directions = {
-        up : spnr.v(0, -1),
-        down : spnr.v(0, 1),
-        left : spnr.v(-1, 0),
-        right : spnr.v(1, 0)
-    };
-
-    oppositeDirections = {
-        up : 'down',
-        down : 'up',
-        right : 'left',
-        left : 'right'
-    };
-
-    constructor(headCoord, length) {
+    constructor(headCoord, length, controller) {
         this.segmentCoords = [];
 
         // Create the snake stretching out to the left
@@ -28,16 +14,10 @@ class Snake {
             var coord = spnr.v(headCoord.x - (i + 1), headCoord.y);
             this.segmentCoords.push(coord);
         });
+        
+        this.controller = controller;
 
-        this.keyWatcher = new spnr.KeyWatcher(document);
-
-        // Create a high-frequency key-checking loop
-        // To avoid keys not being recorded if they are pressed between frames
-        // We need to use an arrow function to preserve scope
-        setInterval(() => this.checkKeysDown(), 10);
-
-        this.keysPressedThisFrame = [];
-        this.crntDirection = 'right';
+        this.crntDirection = Direction.right;
         this.ateThisFrame = false;
         this.alive = true;
     }
@@ -50,35 +30,13 @@ class Snake {
         return this.segmentCoords[0];
     }
 
-    checkKeysDown() {
-        // For all of the keys that we care about:
-        spnr.obj.values(this.controls).forEach(listOfkeys => {
-            listOfkeys.forEach(key => {
-                // If it's down and we haven't already listed it,
-                // list it
-                if (this.keyWatcher.keyIsDown(key) &&
-                    ! this.keysPressedThisFrame.includes(key)) {
-                    this.keysPressedThisFrame.push(key);
-                }
-            });
-        });
-    }
-
-    keybinds() {
-        // This uses a for...of so that we can break
-        var directions = spnr.obj.keys(this.controls);
-        outerLoop:
-        for (var direction of directions) {
-            var keys = this.controls[direction];
-            for (var key of keys) {
-                if (this.keysPressedThisFrame.includes(key)) {
-                    // Don't let the snake turn back into the direction it came from
-                    if (this.oppositeDirections[direction]
-                        != this.crntDirection) {
-                        this.crntDirection = direction;
-                        break outerLoop;
-                    }
-                }
+    controls(gridSize, apples) {
+        var commandedDirection = this.controller.getCommand(this, gridSize, apples);
+        
+        if (commandedDirection != null) {
+            if (OppositeDirection[commandedDirection]
+                != this.crntDirection) {
+                this.crntDirection = commandedDirection;
             }
         }
     }
@@ -128,7 +86,7 @@ class Snake {
     move() {
         var crntHeadCoord = this.segmentCoords[0];
         var newHeadCoord = spnr.v.copyAdd(crntHeadCoord,
-            this.directions[this.crntDirection]);
+            this.directionVectors[this.crntDirection]);
         
         // Add the new coord
         this.segmentCoords.unshift(newHeadCoord);
@@ -150,7 +108,7 @@ class Snake {
     }
 
     update(cellSize, gridSize, apples) {
-        this.keybinds();
+        this.controls(gridSize, apples);
         this.eatApples(apples);
 
         this.hitWalls(gridSize);

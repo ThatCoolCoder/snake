@@ -39,7 +39,11 @@ function findOptimalCanvasSize() {
 }
 
 function reset() {
-    snake = new Snake(spnr.v.copyDiv(gridSize, 2), 3);
+    var controller = window.snakeController; // configuration property that has possibly been defined or is possibly undefined.
+    if (! controller) {
+        controller = new KeyboardSnakeController()
+    }
+    snake = new Snake(spnr.v.copyDiv(gridSize, 2), 3, controller);
     apples = [];
 }
 

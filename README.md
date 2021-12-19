@@ -6,20 +6,6 @@ JavaScript snake clone
 Coords refers to the position on the grid.
 Position refers to the position on the canvas.
 
-## Files (in no particular order)
+## Controllers
 
-#### indexPlain.html
-This is a html page that contains the game, nothing else.
-This is the master copy and is designed for inserting into other pages.
-
-#### indexNalton.html
-This is a html page that fits on the naltonsoftware website.
-
-#### script.js
-This is links all of the other scripts together and sets everything up.
-This file relies on all of the other script files.
-
-#### Snake.js
-This file contains the Snake class and nothing else.
-It is strongly bound to the other classes and can't be dropped into another project easily.
-The snake class relies upon `pixi.js` and the global `cellSize`.
+To make this usable for experiments with AI-controlled snake, a system of swappable controllers has been implemented. The `Snake` class accepts an `AbstractSnakeController` as a constructor parameter. The `AbstractSnakeController` is then passed the values `(snake, gridSize, apples)` every frame from which it can determine the board state and choose its next move. To configure which controller the snake is going to use, set a global variable `snakeController`. If this isn't found then a `KeyboardSnakeController` will be used.
