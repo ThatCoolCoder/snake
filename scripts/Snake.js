@@ -7,10 +7,10 @@ class Snake {
     };
 
     directions = {
-        up : wrk.v(0, -1),
-        down : wrk.v(0, 1),
-        left : wrk.v(-1, 0),
-        right : wrk.v(1, 0)
+        up : spnr.v(0, -1),
+        down : spnr.v(0, 1),
+        left : spnr.v(-1, 0),
+        right : spnr.v(1, 0)
     };
 
     oppositeDirections = {
@@ -24,12 +24,12 @@ class Snake {
         this.segmentCoords = [];
 
         // Create the snake stretching out to the left
-        wrk.doNTimes(length, i => {
-            var coord = wrk.v(headCoord.x - (i + 1), headCoord.y);
+        spnr.doNTimes(length, i => {
+            var coord = spnr.v(headCoord.x - (i + 1), headCoord.y);
             this.segmentCoords.push(coord);
         });
 
-        this.keyWatcher = new wrk.KeyWatcher(document);
+        this.keyWatcher = new spnr.KeyWatcher(document);
 
         // Create a high-frequency key-checking loop
         // To avoid keys not being recorded if they are pressed between frames
@@ -52,7 +52,7 @@ class Snake {
 
     checkKeysDown() {
         // For all of the keys that we care about:
-        wrk.obj.values(this.controls).forEach(listOfkeys => {
+        spnr.obj.values(this.controls).forEach(listOfkeys => {
             listOfkeys.forEach(key => {
                 // If it's down and we haven't already listed it,
                 // list it
@@ -66,7 +66,7 @@ class Snake {
 
     keybinds() {
         // This uses a for...of so that we can break
-        var directions = wrk.obj.keys(this.controls);
+        var directions = spnr.obj.keys(this.controls);
         outerLoop:
         for (var direction of directions) {
             var keys = this.controls[direction];
@@ -88,13 +88,13 @@ class Snake {
         // It just sets a flag that the end of the snake shouldn't disappear
 
         // Use for...in to allow break
-        wrk.dom.clearLogPara();
+        spnr.dom.clearLogPara();
         outerLoop:
         for (var apple of apples) {
             for (var selfCoord of this.segmentCoords) {
-                if (wrk.v.equal(apple.coord, selfCoord)) {
+                if (spnr.v.equal(apple.coord, selfCoord)) {
                     this.ateThisFrame = true;
-                    wrk.arr.removeItem(apples, apple);
+                    spnr.arr.removeItem(apples, apple);
                     break outerLoop;
                 }
             }
@@ -116,7 +116,7 @@ class Snake {
             for (var selfCoord2 of this.segmentCoords) {
                 // This here checks if they have the same value,
                 // but aren't the same memory address
-                if (wrk.v.equal(selfCoord, selfCoord2) &&
+                if (spnr.v.equal(selfCoord, selfCoord2) &&
                     selfCoord != selfCoord2) {
                     this.alive = false;
                     break;
@@ -127,7 +127,7 @@ class Snake {
 
     move() {
         var crntHeadCoord = this.segmentCoords[0];
-        var newHeadCoord = wrk.v.copyAdd(crntHeadCoord,
+        var newHeadCoord = spnr.v.copyAdd(crntHeadCoord,
             this.directions[this.crntDirection]);
         
         // Add the new coord

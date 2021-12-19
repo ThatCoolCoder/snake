@@ -1,13 +1,14 @@
 var canvasSize;
 
-const mouseWatcher = new wrk.MouseWatcher(document);
+const mouseWatcher = new spnr.MouseWatcher(document);
 
 const padding = 20;
-const gridSize = wrk.v(20, 20);
+const gridSize = spnr.v(20, 20);
 const bgColor = 0;
 const fps = 7.5;
 
-const rKey = 82;
+// Key code of the 'r' key
+const rKeyCode = 82;
 
 const maxApples = 1;
 const appleChance = 0.4;
@@ -18,7 +19,7 @@ var apples;
 var canvas;
 
 function findOptimalCanvasSize() {
-    var viewportSize = wrk.dom.viewportSize();
+    var viewportSize = spnr.dom.viewportSize();
     var viewportAspectRatio = viewportSize.x / viewportSize.y;
 
     var canvasAspectRatio = gridSize.x / gridSize.y;
@@ -27,18 +28,18 @@ function findOptimalCanvasSize() {
     if (viewportAspectRatio > canvasAspectRatio) {
         var canvasHeight = viewportSize.y - padding;
         var canvasWidth = canvasHeight / gridSize.y * gridSize.x;
-        return wrk.v(canvasWidth, canvasHeight);
+        return spnr.v(canvasWidth, canvasHeight);
     }
     // Else use its width
     else {
         var canvasWidth = viewportSize.x - padding;
         var canvasHeight = canvasWidth / gridSize.x * gridSize.y;
-        return wrk.v(canvasWidth, canvasHeight);
+        return spnr.v(canvasWidth, canvasHeight);
     }
 }
 
 function reset() {
-    snake = new Snake(wrk.v.copyDiv(gridSize, 2), 3);
+    snake = new Snake(spnr.v.copyDiv(gridSize, 2), 3);
     apples = [];
 }
 
@@ -97,8 +98,8 @@ PRESS R TO RESTART`;
 
 function spawnApples() {
     if (apples.length < maxApples &&
-        wrk.randflt(0, 1) < appleChance) {
-        var coord = wrk.v.random(wrk.v(0, 0), gridSize, false);
+        spnr.randflt(0, 1) < appleChance) {
+        var coord = spnr.v.random(spnr.v(0, 0), gridSize, false);
         var apple = new Apple(coord);
         apples.push(apple);
     }
@@ -134,7 +135,7 @@ function draw() {
         return;
     }
 
-    if (keyIsDown(rKey)) {
+    if (keyIsDown(rKeyCode)) {
         reset();
     }
 

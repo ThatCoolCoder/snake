@@ -1,6 +1,6 @@
 class Apple {
     constructor(coord, color=[255, 0, 0]) {
-        this.coord = wrk.v.copy(coord);
+        this.coord = spnr.v.copy(coord);
         this.color = color.concat([]);
     }
 
