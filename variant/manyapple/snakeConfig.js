@@ -1,8 +1,8 @@
 // var not const so it can be overridden
 var snakeConfig = {
     gridSize : spnr.v(20, 20),
-    maxApples : 1,
-    appleChance : 0.4,
+    maxApples : 400,
+    appleChance : 1,
     appleColor : [255, 0, 0],
     snakeColor : 255,
     bgColor : 0,

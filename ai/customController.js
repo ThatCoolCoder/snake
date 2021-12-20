@@ -1,1 +1,0 @@
-snakeController = new BasicAIController();

@@ -1,4 +1,3 @@
-// var not const so it can be overridden
 var snakeConfig = {
     gridSize : spnr.v(20, 20),
     maxApples : 100,
