@@ -1,4 +1,5 @@
 var snakeConfig = {
+    variantName : 'cyclerai',
     gridSize : spnr.v(20, 20),
     maxApples : 100,
     appleChance : 0.4,

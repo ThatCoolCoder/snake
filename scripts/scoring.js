@@ -1,9 +1,9 @@
 const highScoreName = 'snakeHighScore';
 
-function getHighScore() {
-    return Number(localStorage.getItem(highScoreName));
+function getHighScore(variantName='') {
+    return Number(localStorage.getItem(highScoreName + '-' + variantName));
 }
 
-function setHighScore(score) {
-    localStorage.setItem(highScoreName, score);
+function setHighScore(score, variantName='') {
+    localStorage.setItem(highScoreName + '-' + variantName, score);
 }

@@ -1,5 +1,6 @@
 // var not const so it can be overridden
 var snakeConfig = {
+    variantName : 'normal',
     gridSize : spnr.v(20, 20),
     maxApples : 1,
     appleChance : 0.4,

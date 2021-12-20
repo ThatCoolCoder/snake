@@ -61,7 +61,7 @@ function drawScore() {
     strokeWeight(2);
     textSize(canvasSize.x / snakeConfig.gridSize.x);
 
-    var textToWrite = `SCORE: ${snake.length}    HI: ${getHighScore()}`;
+    var textToWrite = `SCORE: ${snake.length}    HI: ${getHighScore(snakeConfig.variantName)}`;
     text(textToWrite, canvasSize.x / 2, canvasSize.y * 0.95);
 
     pop();
@@ -82,7 +82,7 @@ function showLoseText() {
 
     var textToWrite =
 `SCORE: ${snake.length}
-HIGH SCORE: ${getHighScore()}
+HIGH SCORE: ${getHighScore(snakeConfig.variantName)}
 PRESS R TO RESTART`;
 
     text(textToWrite, canvasSize.x / 2, canvasSize.y / 2 - 50 / 2);
@@ -138,7 +138,7 @@ function draw() {
 
     if (snake.alive) {
         spawnApples();
-        if (snake.length > getHighScore()) setHighScore(snake.length);
+        if (snake.length > getHighScore(snakeConfig.variantName)) setHighScore(snake.length, snakeConfig.variantName);
         drawScore();
     }
 

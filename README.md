@@ -10,6 +10,7 @@ Position refers to the position on the canvas.
 
 To make this program really customisable and configurable, important parameters of the game can be controlled through a `snakeConfig`. A `snakeConfig` is a dictionary/object declared in the global scope called `snakeConfig`. It has the following parameters (all are required if you are creating a custom snake config):
 
+- `variantName` (string). Name of this variant (preferably no spaces). Used for saving scores seperately
 - `gridSize` (spnr vector with x and y as int). Size of the grid that the snake can go on.
 - `maxApples` (int). Maximum amount of apples that can exist at any given time.
 - `appleChance` (float from 0 to 1). Probability that an apple will spawn on any frame if `quantity of apples < maxApples`.
