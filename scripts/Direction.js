@@ -11,3 +11,7 @@ const OppositeDirection = {
     [Direction.left] : Direction.right,
     [Direction.right] : Direction.left
 }
+
+function directionIsHorizontal(direction) {
+    return direction == Direction.left || direction == Direction.right;
+}

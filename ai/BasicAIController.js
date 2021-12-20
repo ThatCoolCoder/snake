@@ -17,7 +17,7 @@ class BasicAIController extends AbstractSnakeController {
     }
 
     isBesideApple(snake, apple) {
-        if (snake.crntDirection == Direction.left || snake.crntDirection == Direction.right) { 
+        if (directionIsHorizontal(snake.crntDirection)) { 
             return apple.coord.x == snake.headCoord.x;
         }
         else {
@@ -25,14 +25,27 @@ class BasicAIController extends AbstractSnakeController {
         }
     }
 
+    willHitTail(snake, direction) {
+        if (directionIsHorizontal(direction)) {
+            return snake.segmentCoords.some(coord => {
+                return coord.x == snake.headCoord.x && coord.y != snake.headCoord.y;
+            })
+        }
+        else {
+            return snake.segmentCoords.some(coord => {
+                return coord.y == snake.headCoord.y && coord.x != snake.headCoord.x;
+            })
+        }
+    }
+
     avoidEdges(snake, gridSize) {
-        if (snake.crntDirection == Direction.left || snake.crntDirection == Direction.right)
+        if (directionIsHorizontal(snake.crntDirection))
         {
             if (snake.headCoord.x == 0 || snake.headCoord.x == gridSize.x - 1) {
                 return (snake.headCoord.y > gridSize.y / 2) ? Direction.up : Direction.down;
             }
         }
-        if (snake.crntDirection == Direction.up || snake.crntDirection == Direction.down)
+        else
         {
             if (snake.headCoord.y == 0 || snake.headCoord.y == gridSize.y - 1) {
                 return (snake.headCoord.x > gridSize.x / 2) ? Direction.left : Direction.right;
@@ -43,17 +56,18 @@ class BasicAIController extends AbstractSnakeController {
 
     getApple(snake, gridSize, apples) {
         var apple = apples[0];
+
+        if (spnr.v.equal(snake.headCoord, apple.coord)) return;
+
         if (this.isBesideApple(snake, apple)) {
-            if (apple.coord.x == snake.headCoord.x) {
+            if (apple.coord.x == snake.headCoord.x && ! this.willHitTail(snake, Direction.left)) {
                 return (apple.coord.y < snake.headCoord.y) ? Direction.up : Direction.down;
             }
-            else if (apple.coord.y == snake.headCoord.y) {
+            else if (apple.coord.y == snake.headCoord.y && ! this.willHitTail(snake, Direction.up)) {
                 return (apple.coord.x < snake.headCoord.x) ? Direction.left : Direction.right;
             }
         }
-        else {
-            return this.avoidEdges(snake, gridSize);
-        }
+        return this.avoidEdges(snake, gridSize);
     }
 
     getCommand(snake, gridSize, apples) {

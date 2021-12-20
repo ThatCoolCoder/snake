@@ -32,12 +32,14 @@ class Snake {
     }
 
     controls(gridSize, apples) {
-        var commandedDirection = this.controller.getCommand(this, gridSize, apples);
-        
-        if (commandedDirection != null) {
-            if (OppositeDirection[commandedDirection]
-                != this.crntDirection) {
-                this.crntDirection = commandedDirection;
+        if (this.alive) {
+            var commandedDirection = this.controller.getCommand(this, gridSize, apples);
+            
+            if (commandedDirection != null) {
+                if (OppositeDirection[commandedDirection]
+                    != this.crntDirection) {
+                    this.crntDirection = commandedDirection;
+                }
             }
         }
     }
