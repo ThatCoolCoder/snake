@@ -3,15 +3,9 @@ var canvasSize;
 const mouseWatcher = new spnr.MouseWatcher(document);
 
 const padding = 20;
-const gridSize = spnr.v(20, 20);
-const bgColor = 0;
-const fps = 7.5;
 
 // Key code of the 'r' key
 const rKeyCode = 82;
-
-const maxApples = 1;
-const appleChance = 0.4;
 
 var snake;
 var apples;
@@ -22,28 +16,24 @@ function findOptimalCanvasSize() {
     var viewportSize = spnr.dom.viewportSize();
     var viewportAspectRatio = viewportSize.x / viewportSize.y;
 
-    var canvasAspectRatio = gridSize.x / gridSize.y;
+    var canvasAspectRatio = snakeConfig.gridSize.x / snakeConfig.gridSize.y;
 
     // If the grid is more narrow, then use its height
     if (viewportAspectRatio > canvasAspectRatio) {
         var canvasHeight = viewportSize.y - padding;
-        var canvasWidth = canvasHeight / gridSize.y * gridSize.x;
+        var canvasWidth = canvasHeight / snakeConfig.gridSize.y * snakeConfig.gridSize.x;
         return spnr.v(canvasWidth, canvasHeight);
     }
     // Else use its width
     else {
         var canvasWidth = viewportSize.x - padding;
-        var canvasHeight = canvasWidth / gridSize.x * gridSize.y;
+        var canvasHeight = canvasWidth / snakeConfig.gridSize.x * snakeConfig.gridSize.y;
         return spnr.v(canvasWidth, canvasHeight);
     }
 }
 
 function reset() {
-    var controller = window.snakeController; // configuration property that has possibly been defined or is possibly undefined.
-    if (! controller) {
-        controller = new KeyboardSnakeController()
-    }
-    snake = new Snake(spnr.v.copyDiv(gridSize, 2), 3, controller);
+    snake = new Snake(spnr.v.copyDiv(snakeConfig.gridSize, 2), 3, snakeConfig.controllerFactory(), snakeConfig.snakeColor);
     apples = [];
 }
 
@@ -53,11 +43,11 @@ function showStartText() {
     fill(255);
     stroke(0);
     strokeWeight(4);
-    textSize(canvasSize.x / gridSize.x * 2);
+    textSize(canvasSize.x / snakeConfig.gridSize.x * 2);
 
     text('SNAKE', canvasSize.x / 2, canvasSize.y * 0.35);
 
-    textSize(canvasSize.x / gridSize.x);
+    textSize(canvasSize.x / snakeConfig.gridSize.x);
     text('PLAY USING ARROW KEYS OR WASD\nCLICK TO START',
         canvasSize.x / 2, canvasSize.y * 0.5);
 
@@ -69,7 +59,7 @@ function drawScore() {
     fill(255);
     stroke(0);
     strokeWeight(2);
-    textSize(canvasSize.x / gridSize.x);
+    textSize(canvasSize.x / snakeConfig.gridSize.x);
 
     var textToWrite = `SCORE: ${snake.length}    HI: ${getHighScore()}`;
     text(textToWrite, canvasSize.x / 2, canvasSize.y * 0.95);
@@ -83,12 +73,12 @@ function showLoseText() {
     fill(255);
     stroke(0);
     strokeWeight(4);
-    textSize(canvasSize.x / gridSize.x * 2);
+    textSize(canvasSize.x / snakeConfig.gridSize.x * 2);
 
     text(`YOU LOSE`, canvasSize.x / 2, canvasSize.y / 2 - 50 * 2);
 
     strokeWeight(4);
-    textSize(canvasSize.x / gridSize.x);
+    textSize(canvasSize.x / snakeConfig.gridSize.x);
 
     var textToWrite =
 `SCORE: ${snake.length}
@@ -101,10 +91,10 @@ PRESS R TO RESTART`;
 }
 
 function spawnApples() {
-    if (apples.length < maxApples &&
-        spnr.randflt(0, 1) < appleChance) {
-        var coord = spnr.v.random(spnr.v(0, 0), gridSize, false);
-        var apple = new Apple(coord);
+    if (apples.length < snakeConfig.maxApples &&
+        spnr.randflt(0, 1) < snakeConfig.appleChance) {
+        var coord = spnr.v.random(spnr.v(0, 0), snakeConfig.gridSize, false);
+        var apple = new Apple(coord, snakeConfig.appleColor);
         apples.push(apple);
     }
 }
@@ -113,7 +103,7 @@ function setup() {
     canvas = createCanvas(1, 1);
     rectMode(CORNER);
     textAlign(CENTER);
-    frameRate(fps);
+    frameRate(snakeConfig.fps);
 }
 
 var waitingToStart = true;
@@ -124,9 +114,9 @@ function draw() {
     canvasSize = findOptimalCanvasSize();
     resizeCanvas(canvasSize.x, canvasSize.y);
 
-    var cellSize = canvasSize.x / gridSize.x;
+    var cellSize = canvasSize.x / snakeConfig.gridSize.x;
 
-    background(0, 0, 0);
+    background(snakeConfig.bgColor);
 
     if (waitingToStart) {
         showStartText();
@@ -144,7 +134,7 @@ function draw() {
     }
 
     apples.forEach(apple => apple.draw(cellSize));
-    snake.update(cellSize, gridSize, apples);
+    snake.update(cellSize, snakeConfig.gridSize, apples);
 
     if (snake.alive) {
         spawnApples();

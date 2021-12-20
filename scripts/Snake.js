@@ -6,7 +6,7 @@ class Snake {
         [Direction.right] : spnr.v(1, 0)
     };
 
-    constructor(headCoord, length, controller) {
+    constructor(headCoord, length, controller, color=255) {
         this.segmentCoords = [];
 
         // Create the snake stretching out to the left
@@ -16,6 +16,7 @@ class Snake {
         });
         
         this.controller = controller;
+        this.color = color;
 
         this.crntDirection = Direction.right;
         this.ateThisFrame = false;
@@ -96,7 +97,7 @@ class Snake {
 
     draw(cellSize) {
         push();
-        fill(255);
+        fill(this.color);
         noStroke();
         scale(cellSize);
 
