@@ -7,5 +7,5 @@ var snakeConfig = {
     snakeColor : 255,
     bgColor : 0,
     fps : 60,
-    controllerFactory : () => new KeyboardSnakeController()
+    controllerFactory : () => new CombinedSnakeController()
 };

@@ -1,15 +1,17 @@
 body, html, main {
-    background-color: #111111;
+    background-color: #222222;
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
+    overscroll-behavior: contain;
 }
 
 canvas {
     margin-right: auto;
     margin-left: auto;
     display: block;
+    touch-action: none;
 }
 
 * {
@@ -20,7 +22,3 @@ canvas {
 .center {
     text-align: center;
 }
-
-/* .snakeAnchor {
-
-} */

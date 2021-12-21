@@ -4,9 +4,6 @@ const mouseWatcher = new spnr.MouseWatcher(document);
 
 const padding = 20;
 
-// Key code of the 'r' key
-const rKeyCode = 82;
-
 var snake;
 var apples;
 
@@ -48,7 +45,7 @@ function showStartText() {
     text('SNAKE', canvasSize.x / 2, canvasSize.y * 0.35);
 
     textSize(canvasSize.x / snakeConfig.gridSize.x);
-    text('PLAY USING ARROW KEYS OR WASD\nCLICK TO START',
+    text('PLAY USING ARROW KEYS OR WASD\n(SWIPE ON MOBILE)\n\nCLICK TO START',
         canvasSize.x / 2, canvasSize.y * 0.5);
 
     pop();
@@ -83,7 +80,7 @@ function showLoseText() {
     var textToWrite =
 `SCORE: ${snake.length}
 HIGH SCORE: ${getHighScore(snakeConfig.variantName)}
-PRESS R TO RESTART`;
+CLICK TO RESTART`;
 
     text(textToWrite, canvasSize.x / 2, canvasSize.y / 2 - 50 / 2);
 
@@ -104,6 +101,7 @@ function setup() {
     rectMode(CORNER);
     textAlign(CENTER);
     frameRate(snakeConfig.fps);
+    reset();
 }
 
 var waitingToStart = true;
@@ -129,10 +127,6 @@ function draw() {
         return;
     }
 
-    if (keyIsDown(rKeyCode)) {
-        reset();
-    }
-
     apples.forEach(apple => apple.draw(cellSize));
     snake.update(cellSize, snakeConfig.gridSize, apples);
 
@@ -144,7 +138,8 @@ function draw() {
 
     else {
         showLoseText();
+        if (mouseWatcher.pointerDown) {
+            reset();
+        }
     }
 }
-
-reset();

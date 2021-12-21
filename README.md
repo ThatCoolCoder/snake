@@ -18,7 +18,7 @@ To make this program really customisable and configurable, important parameters 
 - `bgColor` (any p5 color format). Color of the background.
 - `snakeColor` (any p5 color format). Color of the snake.
 - `fps` (number). Target frames per second of the game
-- `controllerFactory` (function returning an `AbstractSnakeController`). Function used to generate controllers for the snake. Useful for making AI controllers. To use the normal keyboard controller, set it to `() => new KeyboardSnakeController()`.
+- `controllerFactory` (function returning an `AbstractSnakeController`). Function used to generate controllers for the snake. Useful for making AI controllers. To use the normal keyboard controller, set it to `() => new CombinedSnakeController()`.
 
 The default `snakeConfig` is in `/scripts/snakeConfig.js`.
 
