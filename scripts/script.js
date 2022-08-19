@@ -1,6 +1,7 @@
 var canvasSize;
 
 const mouseWatcher = new spnr.MouseWatcher(document);
+const keyWatcher = new spnr.KeyWatcher(document);
 
 const padding = 20;
 
@@ -45,7 +46,7 @@ function showStartText() {
     text('SNAKE', canvasSize.x / 2, canvasSize.y * 0.35);
 
     textSize(canvasSize.x / snakeConfig.gridSize.x);
-    text('PLAY USING ARROW KEYS OR WASD\n(SWIPE ON MOBILE)\n\nCLICK TO START',
+    text('PLAY USING ARROW KEYS OR WASD\n(SWIPE ON MOBILE)\n\nPRESS SPACE OR CLICK TO START',
         canvasSize.x / 2, canvasSize.y * 0.5);
 
     pop();
@@ -80,7 +81,7 @@ function showLoseText() {
     var textToWrite =
 `SCORE: ${snake.length}
 HIGH SCORE: ${getHighScore(snakeConfig.variantName)}
-CLICK TO RESTART`;
+PRESS SPACE OR CLICK TO RESTART`;
 
     text(textToWrite, canvasSize.x / 2, canvasSize.y / 2 - 50 / 2);
 
@@ -118,7 +119,7 @@ function draw() {
 
     if (waitingToStart) {
         showStartText();
-        if (mouseWatcher.pointerDown) {
+        if (mouseWatcher.pointerDown || keyWatcher.keyIsDown("Space")) {
             waitingToStart = false;
             reset();
         }
@@ -138,7 +139,7 @@ function draw() {
 
     else {
         showLoseText();
-        if (mouseWatcher.pointerDown) {
+        if (mouseWatcher.pointerDown || keyWatcher.keyIsDown("Space")) {
             reset();
         }
     }
