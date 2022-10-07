@@ -4,7 +4,7 @@ body, html, main {
     height: 100%;
     margin: 0;
     padding: 0;
-    /* overscroll-behavior: contain; */
+    overscroll-behavior: contain;
 }
 
 main {

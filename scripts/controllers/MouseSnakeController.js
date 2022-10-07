@@ -3,15 +3,16 @@ class MouseSnakeController extends AbstractSnakeController {
 
     constructor() {
         super();
-        this.canvas = spnr.dom.id('defaultCanvas0');
         
-        this.canvas.addEventListener('touchstart', e => {
+        document.body.addEventListener('touchstart', e => {
             this.touchStartPos = spnr.v(e.touches[0].clientX, e.touches[0].clientY);
+            e.preventDefault();
         });
-        this.canvas.addEventListener('touchmove', e => {
+        document.body.addEventListener('touchmove', e => {
             this.touchEndPos = spnr.v(e.touches[0].clientX, e.touches[0].clientY);
+            e.preventDefault();
         });
-        this.canvas.addEventListener('touchend', e => {
+        document.body.addEventListener('touchend', e => {
             if (this.touchStartPos != null && this.touchEndPos != null) {
                 var delta = spnr.v.copySub(this.touchEndPos, this.touchStartPos);
                 var heading = spnr.v.heading(delta, true) + 180;
@@ -20,6 +21,7 @@ class MouseSnakeController extends AbstractSnakeController {
                 else if (heading < 225) this.commands.push(Direction.right);
                 else this.commands.push(Direction.down);
             }
+            e.preventDefault();
         });
         this.touchStartPos = null;
         this.touchEndPos = null;
