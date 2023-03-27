@@ -48,8 +48,7 @@ class Snake {
         // This function doesn't actually make the snake grow.
         // It just sets a flag that the end of the snake shouldn't disappear
 
-        // Use for...in to allow break
-        spnr.dom.clearLogPara();
+        // Use for...of instead of foreach to allow break
         outerLoop:
         for (var apple of apples) {
             for (var selfCoord of this.segmentCoords) {

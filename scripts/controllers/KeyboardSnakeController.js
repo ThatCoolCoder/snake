@@ -1,51 +1,38 @@
 class KeyboardSnakeController extends AbstractSnakeController {
     // Basic snake control using arrow keys or WASD
+    // It checks keys independently of the (very low) game framerate, preventing keys from being unnoticed. 
 
     controls = {
-        [Direction.up] : ['ArrowUp', 'KeyW'],
-        [Direction.down] : ['ArrowDown', 'KeyS'],
-        [Direction.right] : ['ArrowRight', 'KeyD'],
-        [Direction.left] : ['ArrowLeft', 'KeyA']
+        'ArrowUp' : Direction.up,
+        'KeyW' : Direction.up,
+        'ArrowDown' : Direction.down,
+        'KeyS' : Direction.down,
+        'ArrowLeft' : Direction.left,
+        'KeyA' : Direction.left,
+        'ArrowRight' : Direction.right,
+        'KeyD' : Direction.right,
     };
 
     constructor() {
         super();
 
-        // Create a high-frequency key-checking loop
-        // To avoid keys not being recorded if they are pressed between frames
-        // We need to use an arrow function to preserve scope
-        setInterval(() => this.checkKeysDown(), 10);
-        this.keyWatcher = new spnr.KeyWatcher(document);
-        this.keysPressedThisFrame = [];
-    }
+        // Buffer of commanded directions.
+        // Not flushed after each input grab -
+        // so if you press two in rapid succession they are both registered
+        this.inputBuffer = [];
 
-    checkKeysDown() {
-        // For all of the keys that we care about:
-        spnr.obj.values(this.controls).forEach(listOfkeys => {
-            listOfkeys.forEach(key => {
-                // If it's down and we haven't already listed it,
-                // list it
-                if (this.keyWatcher.keyIsDown(key) &&
-                    ! this.keysPressedThisFrame.includes(key)) {
-                    this.keysPressedThisFrame.push(key);
+        document.addEventListener("keydown", e => {
+            if (e.code in this.controls) {
+                var direction = this.controls[e.code];
+                // two presses in the same direction will be merged into one
+                if (this.inputBuffer[this.inputBuffer.length - 1] != direction) {
+                    this.inputBuffer.push(direction);
                 }
-            });
+            }
         });
     }
 
     getCommand(snake, gridSize, apples) {
-        var directions = spnr.obj.keys(this.controls);
-        var command = null;
-        if (this.keysPressedThisFrame.length > 0) {
-            for (var direction of directions) {
-                var keys = this.controls[direction];
-                if (keys.includes(this.keysPressedThisFrame[0])) {
-                    command = direction;
-                    break;
-                }
-            }
-        }
-        this.keysPressedThisFrame = [];
-        return command;
+        return this.inputBuffer.shift() ?? null;
     }
 }
