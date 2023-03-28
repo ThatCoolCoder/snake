@@ -6,7 +6,7 @@ Configurable JavaScript snake clone with multiple game modes and AIs.
 
 #### File setup
 
-All that is needed is a html file and a javascript file for a config. Variants should be organised so that there is one per subdirectory of `variants/` (AI-controlled snakes should go in the `ai/` directory instead). Name the html file `index.html` so it is found when navigating to the subdirectory, and the config file should be `snakeConfig.js`.
+All that is needed is a html file and a javascript file for a config. The html file should be called `index.html` and placed in a subdirectory of `variants`, so that the final url ends up being `variants/myawesomevariant`. (AI-controlled snakes should go in the `ai/` directory instead). The config file should be `snakeConfig.js`.
 
 For the contents of the `index.html` file just copy one from another variant and change it as needed. Read the next section for contents of `snakeConfig`.
 
