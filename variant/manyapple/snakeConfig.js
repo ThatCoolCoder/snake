@@ -1,6 +1,6 @@
 // var not const so it can be overridden
 var snakeConfig = {
-    variantName : 'fast',
+    variantName : 'manyapple',
     gridSize : spnr.v(20, 20),
     maxApples : 400,
     appleChance : 1,
