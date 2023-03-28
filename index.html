@@ -9,13 +9,14 @@
         <h1>Snake by ThatCoolCoder</h1>
         <p>A lightweight, extensible JavaScript implementation of the classic snake game</p>
 
-        <a href="https://github.com/That-Cool-Coder/snake">View source on GitHub</a>
+        <a href="https://github.com/ThatCoolCoder/snake">View source on GitHub</a>
         
         <h2>Variants:</h2>
     </body>
 
     <script>
-        var data = {
+        // Dictionary of variant name to variant URL
+        var variants = {
             'Normal game' : 'normal/',
             'Many apples' : 'variant/manyapple/',
             'Fast' : 'variant/fast/',
@@ -24,10 +25,10 @@
             'Sensible AI' : 'ai/sensible/',
             'Slow AI' : 'ai/cycler/'
         };
-        for (var item in data) {
+        for (var item in variants) {
             var anchor = document.createElement('a');
             anchor.text = item;
-            anchor.href = data[item];
+            anchor.href = variants[item];
             anchor.classList.add('snakeAnchor');
             document.body.appendChild(anchor);
             document.body.appendChild(document.createElement('br'));
