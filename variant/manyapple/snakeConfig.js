@@ -2,6 +2,7 @@
 var snakeConfig = {
     variantName : 'manyapple',
     gridSize : spnr.v(20, 20),
+    startLength : 3,
     maxApples : 400,
     appleChance : 1,
     appleColor : [255, 0, 0],

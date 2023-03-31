@@ -31,7 +31,7 @@ function findOptimalCanvasSize() {
 }
 
 function reset() {
-    snake = new Snake(spnr.v.copyDiv(snakeConfig.gridSize, 2), 3, snakeConfig.controllerFactory(), snakeConfig.snakeColor);
+    snake = new Snake(spnr.v.copyDiv(snakeConfig.gridSize, 2), snakeConfig.startLength, snakeConfig.controllerFactory(), snakeConfig.snakeColor);
     apples = [];
 }
 

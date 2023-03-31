@@ -1,6 +1,7 @@
 var snakeConfig = {
     variantName : 'sensibleai',
     gridSize : spnr.v(20, 20),
+    startLength : 3,
     maxApples : 1,
     appleChance : 0.4,
     appleColor : [255, 0, 0],

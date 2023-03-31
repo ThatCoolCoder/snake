@@ -19,14 +19,15 @@ To make this program configurable, important parameters of the game can be contr
 ```javascript
 var snakeConfig = {
     variantName : 'MyAmazingVariant',   // Name of this variant, preferably with no spaces. Used for saving scores seperately
-    gridSize: spnr.v(20, 20),           // The size of the grid that the snake can go on. A spnr vector with integers for x and y.
-    maxApples: 1,                       // The maximum amount of apples that can exist at any given time
-    appleChance: 0.5,                   // Probability (from 0 to 1) that an apple will spawn on any frame if quantity of apples is less than maxApples.
-    fps: 10,                            // Target frames per second of the game. Directly controls the snake movement speed - snake moves 1 unit every frame
+    gridSize : spnr.v(20, 20),          // The size of the grid that the snake can go on. A spnr vector with integers for x and y.
+    startLength : 3,                    // Starting length of the apple
+    maxApples : 1,                      // The maximum amount of apples that can exist at any given time
+    appleChance : 0.5,                  // Probability (from 0 to 1) that an apple will spawn on any frame if quantity of apples is less than maxApples.
+    fps : 10,                           // Target frames per second of the game. Directly controls the snake movement speed - snake moves 1 unit every frame
 
-    snakeColor: 255,            // Color of the snake, in any format recognised by p5.js. If a single integer is given it is interpreted as a greyscale value (from 0 to 255). An array of three RGB values can also be used 
-    appleColor: [255, 0, 0],    // Color of the apples
-    bgColor: 0,                 // Color of the background
+    snakeColor : 255,           // Color of the snake, in any format recognised by p5.js. If a single integer is given it is interpreted as a greyscale value (from 0 to 255). An array of three RGB values can also be used 
+    appleColor : [255, 0, 0],   // Color of the apples
+    bgColor : 0,                // Color of the background
 
     controllerFactory : () => new CombinedSnakeController() // Function used to generate controllers for the snake. Useful for making AI controllers - see the Controllers section below
 };
